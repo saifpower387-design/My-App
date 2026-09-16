@@ -1,0 +1,1304 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SaifTok Elite Pro - Final Ultimate Edition</title>
+    <style>
+        :root {
+            --primary: #ff2a5f;
+            --primary-glow: rgba(255, 42, 95, 0.4);
+            --secondary: #00f2fe;
+            --bg-deep: #0a0a0f;
+            --surface: rgba(26, 26, 36, 0.85);
+            --surface-solid: #161622;
+            --border: rgba(255, 255, 255, 0.08);
+            --text: #ffffff;
+            --text-secondary: #94a3b8;
+            --gold: #ffd700;
+            --gold-glow: rgba(255, 215, 0, 0.3);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-deep);
+            color: var(--text);
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 440px;
+            height: 100%;
+            background-color: var(--bg-deep);
+            position: relative;
+            box-shadow: 0 0 40px rgba(0,0,0,0.9);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border-left: 1px solid var(--border);
+            border-right: 1px solid var(--border);
+        }
+
+        @media (min-width: 441px) {
+            .app-container {
+                height: 92vh;
+                border-radius: 24px;
+                border: 1px solid var(--border);
+            }
+        }
+
+        .screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-deep);
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 1;
+            transform: translateX(100%);
+            visibility: hidden;
+        }
+
+        .screen.active {
+            transform: translateX(0);
+            visibility: visible;
+            z-index: 10;
+        }
+
+        /* Auth Screen */
+        #auth-screen {
+            justify-content: center;
+            align-items: center;
+            padding: 32px;
+            text-align: center;
+            background: radial-gradient(circle at center, #1a1a2e 0%, var(--bg-deep) 100%);
+        }
+
+        .logo-container {
+            margin-bottom: 40px;
+        }
+
+        .logo-badge {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 24px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 38px;
+            margin: 0 auto 16px;
+            box-shadow: 0 10px 25px var(--primary-glow);
+        }
+
+        .logo-container h1 {
+            font-size: 32px;
+            font-weight: 800;
+        }
+
+        .logo-container h1 span {
+            color: var(--primary);
+        }
+
+        .logo-container p {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-top: 6px;
+        }
+
+        .auth-form {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .input-group {
+            position: relative;
+            width: 100%;
+        }
+
+        .input-group input, .input-group select, .input-group textarea {
+            width: 100%;
+            padding: 14px 16px;
+            background-color: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            color: var(--text);
+            font-size: 15px;
+            outline: none;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s;
+        }
+
+        .input-group textarea {
+            resize: none;
+            height: 90px;
+        }
+
+        .input-group input:focus, .input-group select:focus, .input-group textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 15px var(--primary-glow);
+            background-color: var(--surface-solid);
+        }
+
+        .input-group select option {
+            background-color: #161622;
+            color: var(--text);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            border-radius: 14px;
+            border: none;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.2s, opacity 0.2s;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), #ff5e62);
+            color: white;
+            box-shadow: 0 8px 20px var(--primary-glow);
+        }
+
+        /* Feed & Stories */
+        .feed-screen-bg {
+            background-color: #000;
+        }
+
+        .stories-bar {
+            position: absolute;
+            top: 10px;
+            left: 0;
+            width: 100%;
+            height: 75px;
+            z-index: 15;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 16px;
+            overflow-x: auto;
+            scrollbar-width: none;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
+        }
+
+        .stories-bar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .story-ring {
+            width: 54px;
+            height: 54px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-shrink: 0;
+            cursor: pointer;
+            padding: 2px;
+        }
+
+        .story-inner {
+            width: 100%;
+            height: 100%;
+            background: #111;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 20px;
+            border: 2px solid var(--bg-deep);
+        }
+
+        .feed-container {
+            flex: 1;
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory;
+            scrollbar-width: none;
+        }
+
+        .feed-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .video-card {
+            width: 100%;
+            height: 100%;
+            scroll-snap-align: start;
+            position: relative;
+            background-color: #0d0d12;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .video-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #181824, #0f0f17);
+            color: var(--text);
+            text-align: center;
+            padding: 24px;
+        }
+
+        .promo-banner-bg {
+            background: linear-gradient(135deg, #1f1c2c, #928dab) !important;
+        }
+
+        .video-info {
+            position: absolute;
+            bottom: 75px;
+            left: 16px;
+            right: 80px;
+            z-index: 5;
+            text-align: right;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+        }
+
+        .user-row-flex {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 6px;
+        }
+
+        .follow-mini-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .follow-mini-btn.followed {
+            background: rgba(255,255,255,0.2);
+            color: #ccc;
+        }
+
+        .video-info h3 {
+            font-size: 16px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .video-info p {
+            font-size: 13px;
+            color: #e2e8f0;
+            margin-bottom: 6px;
+            line-height: 1.4;
+        }
+
+        .meta-badges {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-top: 4px;
+        }
+
+        .badge {
+            background-color: rgba(20, 20, 30, 0.75);
+            backdrop-filter: blur(8px);
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            color: var(--secondary);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .video-actions {
+            position: absolute;
+            bottom: 75px;
+            right: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            align-items: center;
+            z-index: 5;
+        }
+
+        .action-btn {
+            background: none;
+            border: none;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .action-icon {
+            width: 42px;
+            height: 42px;
+            background-color: rgba(30, 30, 45, 0.75);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 18px;
+        }
+
+        .audio-disc {
+            width: 38px;
+            height: 38px;
+            background: linear-gradient(135deg, #222, #000);
+            border: 2px solid #444;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 14px;
+            animation: spin 3s linear infinite;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Context Menu for Long Press on Video */
+        .video-longpress-menu {
+            position: absolute;
+            bottom: 90px;
+            left: 50%;
+            transform: translateX(-50%) scale(0.9);
+            width: 85%;
+            background: rgba(20, 20, 30, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 20px;
+            padding: 14px;
+            z-index: 40;
+            display: none;
+            flex-direction: column;
+            gap: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            opacity: 0;
+            transition: all 0.25s ease;
+        }
+
+        .video-longpress-menu.show {
+            display: flex;
+            opacity: 1;
+            transform: translateX(-50%) scale(1);
+        }
+
+        .menu-option {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid var(--border);
+            padding: 12px;
+            border-radius: 12px;
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .menu-option:active {
+            background: var(--primary);
+        }
+
+        /* Camera & Live Studio Screen */
+        #camera-screen {
+            background: #000;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            padding: 15px;
+        }
+
+        #camera-preview {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 1;
+        }
+
+        .cam-top-bar, .cam-bottom-bar {
+            position: relative;
+            z-index: 5;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .cam-top-bar {
+            background: rgba(0,0,0,0.4);
+            backdrop-filter: blur(10px);
+            padding: 10px 14px;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+        }
+
+        .cam-center-tools {
+            position: relative;
+            z-index: 5;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            background: rgba(15,15,22,0.85);
+            backdrop-filter: blur(15px);
+            padding: 14px;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+        }
+
+        /* Camera Filters classes */
+        .filter-normal { filter: none; }
+        .filter-mono { filter: grayscale(100%); }
+        .filter-sepia { filter: sepia(100%); }
+        .filter-bright { filter: contrast(120%) brightness(130%); }
+
+        /* Live PK Panel styles */
+        .pk-panel-box {
+            background: rgba(0,0,0,0.7);
+            border: 1px solid var(--gold);
+            border-radius: 12px;
+            padding: 10px;
+            text-align: center;
+        }
+
+        /* Camera Controls Row */
+        .cam-controls-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            width: 100%;
+            padding-bottom: 20px;
+        }
+
+        .gallery-picker-btn, .cam-action-btn {
+            width: 48px;
+            height: 48px;
+            background: rgba(30,30,45,0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .shutter-btn {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: transparent;
+            border: 4px solid #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .shutter-inner {
+            width: 56px;
+            height: 56px;
+            background: var(--primary);
+            border-radius: 50%;
+            transition: transform 0.1s;
+        }
+
+        .shutter-btn:active .shutter-inner {
+            transform: scale(0.85);
+        }
+
+        /* Inbox / Chat & Notifications */
+        #inbox-screen {
+            background-color: var(--bg-deep);
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .inbox-header {
+            font-size: 18px;
+            font-weight: 700;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .inbox-tabs {
+            display: flex;
+            gap: 10px;
+            margin: 12px 0;
+        }
+
+        .inbox-tab {
+            flex: 1;
+            padding: 10px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            text-align: center;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            color: var(--text-secondary);
+        }
+
+        .inbox-tab.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .inbox-content-area {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 65px;
+            scrollbar-width: thin;
+        }
+
+        .notification-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: var(--surface);
+            padding: 12px;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+        }
+
+        .notification-icon {
+            font-size: 22px;
+            background: rgba(255,255,255,0.05);
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Direct Chat Room */
+        #chat-room-view {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-deep);
+            z-index: 30;
+            display: none;
+            flex-direction: column;
+            padding: 16px;
+        }
+
+        .room-messages-box {
+            flex: 1;
+            overflow-y: auto;
+            margin: 12px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .msg-bubble {
+            max-width: 75%;
+            padding: 10px 14px;
+            border-radius: 14px;
+            font-size: 14px;
+            line-height: 1.4;
+            word-break: break-word;
+        }
+
+        .msg-incoming {
+            background: var(--surface);
+            align-self: flex-start;
+            border: 1px solid var(--border);
+        }
+
+        .msg-outgoing {
+            background: var(--primary);
+            color: white;
+            align-self: flex-end;
+        }
+
+        .room-input-box {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 65px;
+        }
+
+        /* Live Screen / Main Match view */
+        #live-screen {
+            background: radial-gradient(circle at center, #151522 0%, #07070b 100%);
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .live-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--surface);
+            padding: 10px 16px;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            backdrop-filter: blur(10px);
+        }
+
+        .live-tag {
+            background: var(--primary);
+            color: #fff;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .live-grid-container {
+            flex: 1;
+            margin: 12px 0;
+            background: rgba(15, 15, 22, 0.9);
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .host-avatar {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--gold), var(--primary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            margin-bottom: 10px;
+            border: 3px solid rgba(255,255,255,0.2);
+            box-shadow: 0 0 20px var(--gold-glow);
+        }
+
+        .live-slots-info {
+            font-size: 13px;
+            color: var(--secondary);
+            margin-top: 6px;
+            background: rgba(0, 242, 254, 0.1);
+            padding: 4px 10px;
+            border-radius: 8px;
+            border: 1px solid rgba(0, 242, 254, 0.3);
+        }
+
+        /* Profile Screen */
+        #profile-screen {
+            padding: 20px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+        }
+
+        .profile-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 10px;
+            margin-bottom: 20px;
+        }
+
+        .avatar {
+            width: 86px;
+            height: 86px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 34px;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 12px;
+            box-shadow: 0 8px 25px var(--primary-glow);
+            border: 3px solid rgba(255,255,255,0.15);
+        }
+
+        .profile-name {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .profile-handle {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-top: 4px;
+        }
+
+        .profile-stats {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            padding: 16px 0;
+            background-color: var(--surface);
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            backdrop-filter: blur(10px);
+            margin-bottom: 20px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-num {
+            font-weight: 700;
+            font-size: 17px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        .upload-section {
+            background-color: var(--surface);
+            padding: 18px;
+            border-radius: 18px;
+            border: 1px solid var(--border);
+            backdrop-filter: blur(12px);
+            margin-bottom: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .section-title-box {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 2px;
+        }
+
+        .section-title-box h4 {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            height: 65px;
+            background-color: rgba(12, 12, 18, 0.92);
+            backdrop-filter: blur(15px);
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            z-index: 20;
+        }
+
+        .nav-item {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 11px;
+            font-weight: 500;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            cursor: pointer;
+            flex: 1;
+            transition: color 0.2s;
+        }
+
+        .nav-item.active {
+            color: var(--primary);
+        }
+
+        .nav-icon {
+            font-size: 21px;
+        }
+
+        .nav-camera-btn {
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 20px;
+            box-shadow: 0 4px 15px var(--primary-glow);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        
+        <!-- Auth Screen -->
+        <div id="auth-screen" class="screen active">
+            <div class="logo-container">
+                <div class="logo-badge">⚡</div>
+                <h1>Saif<span>Tok</span> Elite</h1>
+                <p>المنصة الاجتماعية المتكاملة: كاميرا، فلاتر، جولات لايف، وتشات</p>
+            </div>
+            
+            <div class="auth-form">
+                <div class="input-group">
+                    <input type="text" id="username-input" placeholder="اسم المستخدم أو البريد الإلكتروني">
+                </div>
+                <div class="input-group">
+                    <input type="password" id="password-input" placeholder="كلمة المرور السرية">
+                </div>
+                <button class="btn btn-primary" id="login-btn">تسجيل الدخول 🚀</button>
+            </div>
+        </div>
+
+        <!-- Feed Screen -->
+        <div id="feed-screen" class="screen feed-screen-bg">
+            <div class="stories-bar">
+                <div class="story-ring" onclick="alert('📸 إضافة قصة / ستوري جديدة لحسابك!')">
+                    <div class="story-inner">➕</div>
+                </div>
+                <div class="story-ring" onclick="alert('فتح قصة المبدع: مهندس أحمد 💎')">
+                    <div class="story-inner">👨‍💻</div>
+                </div>
+            </div>
+
+            <div class="feed-container" id="feed-container">
+                <div class="video-card" id="main-video-card">
+                    <div class="video-placeholder promo-banner-bg">
+                        <h2 style="font-size: 22px; font-weight: 800; margin-bottom: 10px; color: #fff;">🎬 فيديو تجريبي مميز</h2>
+                        <p style="font-size: 13px; max-width: 310px; color: #cbd5e1; line-height: 1.5;">اضغط ضغطة مطولة على الفيديو لفتح قائمة الخيارات المتكاملة!</p>
+                    </div>
+                    <div class="video-info">
+                        <div class="user-row-flex">
+                            <h3 id="feed-author-name">@saifelshorbagy</h3>
+                            <button class="follow-mini-btn" onclick="toggleFollow(this)">متابعة ➕</button>
+                        </div>
+                        <p>تطوير تطبيقات الجيل القادم برمجياً بنجاح تام #برمجة #تطبيقات #SaifTok 💻✨</p>
+                        <div class="meta-badges">
+                            <span class="badge">🎵 الصوت الأصلي: تريند النخبة</span>
+                            <span class="badge">⏰ منذ ساعتين</span>
+                        </div>
+                    </div>
+                    <div class="video-actions">
+                        <button class="action-btn" onclick="alert('تم تسجيل إعجابك ❤️')"><div class="action-icon">❤️</div><span>340K</span></button>
+                        <button class="action-btn" onclick="alert('فتح التعليقات والردود 💬')"><div class="action-icon">💬</div><span>45K</span></button>
+                        <div class="audio-disc" onclick="playBeepSound()" title="استخدام صوت الفيديو">💿</div>
+                        <button class="action-btn" onclick="alert('📥 جاري تنزيل الفيديو على الموبايل...')"><div class="action-icon">⬇️</div><span>تنزيل</span></button>
+                    </div>
+
+                    <!-- قائمة الضغطة المطولة (Long Press Menu) -->
+                    <div class="video-longpress-menu" id="longpress-menu">
+                        <div class="menu-option" onclick="menuAction('share-internal')">👥 مشاركة مع الأشخاص داخل المنصة</div>
+                        <div class="menu-option" onclick="menuAction('share-external')">🔗 مشاركة خارجية عبر البرامج والمنصات</div>
+                        <div class="menu-option" onclick="menuAction('download')">⬇️ تنزيل الفيديو على الهاتف</div>
+                        <div class="menu-option" onclick="menuAction('report')" style="color: #ff4d4d;">⚠️ إبلاغ عن محتوى مخالف</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Camera, Video, Filters & Gallery Screen -->
+        <div id="camera-screen" class="screen">
+            <!-- فيديو البث الحي للكاميرا الأمامية والخلفية -->
+            <video id="camera-preview" autoplay playsinline muted></video>
+
+            <div class="cam-top-bar">
+                <span style="font-size: 14px; font-weight: 700;">📸 استوديو التصوير المباشر</span>
+                <button class="btn" style="width: auto; padding: 6px 12px; font-size: 12px; background: rgba(255,255,255,0.1);" onclick="switchScreen('feed-screen')">إغلاق ✕</button>
+            </div>
+
+            <div class="cam-center-tools">
+                <!-- إعدادات وصف البث وجولات اللايف -->
+                <input type="text" id="stream-desc-input" placeholder="اكتب وصف البث المباشر هنا (مثلاً: جولة تحدي PK)..." style="font-size: 13px; padding: 8px 12px;">
+                <div class="pk-panel-box">
+                    <div style="font-size: 12px; color: var(--gold); margin-bottom: 2px;">⚔️ جولة لايف تيك توك (PK Score)</div>
+                    <div style="font-size: 18px; font-weight: bold;" id="pk-score-display">0 : 0</div>
+                    <button class="btn btn-primary" style="padding: 6px; font-size: 12px; margin-top: 6px;" onclick="addPKSupport()">🎁 دعم المعركة / إرسال هدية</button>
+                </div>
+            </div>
+
+            <div class="cam-bottom-bar">
+                <div class="cam-controls-row">
+                    <!-- معرض الصور -->
+                    <div class="gallery-picker-btn" onclick="alert('📁 تم فتح معرض الهاتف لاختيار صورة/فيديو جاهز!')" title="معرض الصور">🖼️</div>
+                    
+                    <!-- زر التصوير والفيديو الرئيسي -->
+                    <div class="shutter-btn" onclick="captureMedia()">
+                        <div class="shutter-inner"></div>
+                    </div>
+
+                    <!-- تبديل الكاميرا (أمامي / خلفي) -->
+                    <div class="cam-action-btn" onclick="toggleCameraFacing()" title="قلب الكاميرا">🔄</div>
+                    
+                    <!-- الفلاتر -->
+                    <div class="cam-action-btn" onclick="cycleCameraFilter()" title="تغيير الفلتر">🎨</div>
+                    
+                    <!-- مؤثرات صوتية -->
+                    <div class="cam-action-btn" onclick="playBeepSound()" title="مؤثر صوتي">🔊</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Live Screen / Battles -->
+        <div id="live-screen" class="screen">
+            <div class="live-header">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span class="live-tag">🔴 مباشر</span>
+                    <span style="font-size: 12px; color: var(--gold);">🎮 جولات الألعاب PK</span>
+                </div>
+                <div style="font-size: 13px; color: var(--text-secondary);">👁️ 5,120 مشاهد</div>
+            </div>
+
+            <div class="live-grid-container">
+                <div class="host-avatar">👑</div>
+                <h3>غرفة البث المباشر والتحديات</h3>
+                <div class="live-slots-info">👥 مقاعد الصعود المتاحة: حتى 15 ضيفاً مع المضيف</div>
+                <button class="btn btn-primary" onclick="alert('🙋‍♂️ تم إرسال طلب الصعود مع المضيف بنجاح!')" style="background: linear-gradient(135deg, #00f2fe, #4facfe); color: #000; margin-top: 15px;">
+                    🙋‍♂️ طلب صعود المايك (مع المضيف)
+                </button>
+            </div>
+        </div>
+
+        <!-- Inbox Screen -->
+        <div id="inbox-screen" class="screen">
+            <div class="inbox-header">
+                <span>📥 مركز الرسائل والإشعارات</span>
+            </div>
+
+            <div class="inbox-tabs">
+                <div class="inbox-tab active" onclick="switchInboxTab('chats', this)">💬 الشاتات</div>
+                <div class="inbox-tab" onclick="switchInboxTab('notifs', this)">❤️ الإشعارات</div>
+                <div class="inbox-tab" onclick="switchInboxTab('stories', this)">📸 القصص</div>
+            </div>
+
+            <div class="inbox-content-area" id="inbox-dynamic-container">
+                <div class="notification-row" onclick="openChatRoom('مهندس أحمد العرابي', 'أهلاً يا باشمهندس، كيف الكود معاك؟')">
+                    <div style="width: 40px; height: 40px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">أ</div>
+                    <div style="flex: 1; text-align: right;">
+                        <h5 style="font-size: 14px; font-weight: 700;">مهندس أحمد العرابي</h5>
+                        <p style="font-size: 12px; color: var(--text-secondary);">أهلاً يا باشمهندس، كيف الكود معاك؟</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="chat-room-view">
+                <div class="inbox-header">
+                    <span id="room-target-name" style="font-size: 15px;">اسم الشخص</span>
+                    <button class="btn" style="width: auto; padding: 5px 12px; font-size: 12px; background: #333;" onclick="closeChatRoom()">إرجاع 🔙</button>
+                </div>
+                <div class="room-messages-box" id="room-messages-container">
+                    <div class="msg-bubble msg-incoming">أهلاً بك في الشات المباشر الفاخر 💎</div>
+                </div>
+                <div class="room-input-box">
+                    <input type="text" id="chat-msg-input" placeholder="اكتب رسالتك...">
+                    <button class="btn btn-primary" id="send-chat-msg-btn" style="width: 75px;">إرسال</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Screen -->
+        <div id="profile-screen" class="screen">
+            <div class="profile-header">
+                <div class="avatar">ب</div>
+                <div class="profile-name">باشمهندس</div>
+                <div class="profile-handle">@saif_user</div>
+            </div>
+
+            <div class="profile-stats">
+                <div class="stat-item"><div class="stat-num">142</div><div class="stat-label">المتابَعون</div></div>
+                <div class="stat-item"><div class="stat-num">4.2K</div><div class="stat-label">المتابِعون</div></div>
+                <div class="stat-item"><div class="stat-num">18.9K</div><div class="stat-label">الإعجابات</div></div>
+            </div>
+
+            <div class="upload-section">
+                <div class="section-title-box">
+                    <span>🚀</span>
+                    <h4>استوديو النشر المطور</h4>
+                </div>
+                <div class="input-group">
+                    <textarea id="video-desc-input" placeholder="اكتب وصفاً، هاشتاجات (#برمجة)، أو أشر لشخص بـ @..."></textarea>
+                </div>
+                <button class="btn btn-primary" id="publish-btn">نشر الفيديو بمعايير النخبة 🚀</button>
+            </div>
+
+            <button class="btn btn-primary" id="logout-btn" style="background-color: #262636; margin-bottom: 70px;">تسجيل الخروج</button>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav" id="main-bottom-nav" style="display: none;">
+            <button class="nav-item active" data-target="feed-screen"><span class="nav-icon">🏠</span><span>الرئيسية</span></button>
+            <button class="nav-item" data-target="live-screen"><span class="nav-icon">🔴</span><span>البثوث</span></button>
+            <button class="nav-item" data-target="camera-screen" style="flex: 0.8;" onclick="startCameraStream()"><div class="nav-camera-btn">➕</div></button>
+            <button class="nav-item" data-target="inbox-screen"><span class="nav-icon">📥</span><span>الرسائل</span></button>
+            <button class="nav-item" data-target="profile-screen"><span class="nav-icon">👤</span><span>حسابي</span></button>
+        </nav>
+
+    </div>
+
+    <script>
+        const safeStorage = {
+            memoryStore: {},
+            setItem(key, value) { try { localStorage.setItem(key, value); } catch(e){ this.memoryStore[key]=value; } },
+            getItem(key) { try { return localStorage.getItem(key); } catch(e){ return this.memoryStore[key]||null; } },
+            removeItem(key) { try { localStorage.removeItem(key); } catch(e){ delete this.memoryStore[key]; } }
+        };
+
+        const screens = document.querySelectorAll('.screen');
+        const navItems = document.querySelectorAll('.nav-item');
+        const loginBtn = document.getElementById('login-btn');
+        const logoutBtn = document.getElementById('logout-btn');
+        const usernameInput = document.getElementById('username-input');
+        const bottomNav = document.getElementById('main-bottom-nav');
+
+        function switchScreen(screenId) {
+            screens.forEach(screen => screen.classList.remove('active'));
+            const targetScreen = document.getElementById(screenId);
+            if (targetScreen) targetScreen.classList.add('active');
+            bottomNav.style.display = (screenId === 'auth-screen') ? 'none' : 'flex';
+        }
+
+        navItems.forEach(item => {
+            item.addEventListener('click', () => {
+                const target = item.getAttribute('data-target');
+                if (target) {
+                    navItems.forEach(nav => nav.classList.remove('active'));
+                    item.classList.add('active');
+                    switchScreen(target);
+                }
+            });
+        });
+
+        // Camera Feed & Controls Script
+        let mediaStream = null;
+        let useFrontCamera = true;
+        const videoElement = document.getElementById('camera-preview');
+
+        async function startCameraStream() {
+            try {
+                if (mediaStream) {
+                    mediaStream.getTracks().forEach(track => track.stop());
+                }
+                const constraints = {
+                    video: { facingMode: useFrontCamera ? 'user' : 'environment' },
+                    audio: true
+                };
+                mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
+                videoElement.srcObject = mediaStream;
+            } catch (err) {
+                console.log("الكاميرا تعمل بالمحاكاة أو يتطلب إذن المتصفح: ", err);
+            }
+        }
+
+        function toggleCameraFacing() {
+            useFrontCamera = !useFrontCamera;
+            startCameraStream();
+        }
+
+        // Camera Filters Cycle
+        const filtersList = ['filter-normal', 'filter-mono', 'filter-sepia', 'filter-bright'];
+        let currentFilterIdx = 0;
+        function cycleCameraFilter() {
+            videoElement.className = '';
+            currentFilterIdx = (currentFilterIdx + 1) % filtersList.length;
+            videoElement.classList.add(filtersList[currentFilterIdx]);
+            playBeepSound();
+        }
+
+        // Web Audio API Sound Effects
+        function playBeepSound() {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = audioCtx.createOscillator();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(650, audioCtx.currentTime);
+                osc.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.15);
+            } catch(e) {}
+        }
+
+        // PK Battle Score Logic
+        let myScore = 0;
+        let opponentScore = 0;
+        function addPKSupport() {
+            myScore += 120;
+            opponentScore += 85;
+            document.getElementById('pk-score-display').textContent = `${myScore} : ${opponentScore}`;
+            playBeepSound();
+        }
+
+        function captureMedia() {
+            const desc = document.getElementById('stream-desc-input').value;
+            alert("تم التقاط الصورة/الفيديو وحفظه بنجاح! الوصف: " + (desc || "بدون وصف"));
+        }
+
+        // Long Press Logic for Video Card
+        const mainVideoCard = document.getElementById('main-video-card');
+        const longpressMenu = document.getElementById('longpress-menu');
+        let pressTimer = null;
+
+        mainVideoCard.addEventListener('touchstart', () => {
+            pressTimer = setTimeout(() => { longpressMenu.classList.add('show'); }, 600);
+        });
+        mainVideoCard.addEventListener('touchend', () => { clearTimeout(pressTimer); });
+        mainVideoCard.addEventListener('mousedown', () => {
+            pressTimer = setTimeout(() => { longpressMenu.classList.add('show'); }, 600);
+        });
+        mainVideoCard.addEventListener('mouseup', () => { clearTimeout(pressTimer); });
+
+        document.addEventListener('click', (e) => {
+            if (!mainVideoCard.contains(e.target) && longpressMenu.classList.contains('show')) {
+                longpressMenu.classList.remove('show');
+            }
+        });
+
+        window.menuAction = function(actionType) {
+            longpressMenu.classList.remove('show');
+            if (actionType === 'share-internal') alert('👥 جاري المشاركة مع أصدقائك داخل المنصة...');
+            else if (actionType === 'share-external') alert('🔗 جاري مشاركة الرابط خارجياً...');
+            else if (actionType === 'download') alert('⬇️ جاري التنزيل على الهاتف بنجاح!');
+            else if (actionType === 'report') alert('⚠️ تم إرسال البلاغ بنجاح.');
+        }
+
+        window.toggleFollow = function(btn) {
+            if (btn.classList.contains('followed')) {
+                btn.classList.remove('followed');
+                btn.textContent = 'متابعة ➕';
+            } else {
+                btn.classList.add('followed');
+                btn.textContent = 'مُتابَع ✅';
+            }
+        }
+
+        const inboxContainer = document.getElementById('inbox-dynamic-container');
+        window.switchInboxTab = function(type, tabEl) {
+            document.querySelectorAll('.inbox-tab').forEach(t => t.classList.remove('active'));
+            tabEl.classList.add('active');
+            if (type === 'chats') {
+                inboxContainer.innerHTML = `<div class="notification-row" onclick="openChatRoom('مهندس أحمد العرابي', 'أهلاً يا باشمهندس!')"><div style="width: 40px; height: 40px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">أ</div><div style="flex: 1; text-align: right;"><h5 style="font-size: 14px;">مهندس أحمد العرابي</h5><p style="font-size: 12px; color: var(--text-secondary);">أهلاً يا باشمهندس!</p></div></div>`;
+            } else if (type === 'notifs') {
+                inboxContainer.innerHTML = `<div class="notification-row"><div class="notification-icon">❤️</div><div style="flex: 1; text-align: right;"><h5 style="font-size: 14px;">إعجاب جديد</h5><p style="font-size: 12px; color: var(--text-secondary);">قام @sara_tech بالإعجاب بفيديوهاتك</p></div></div>`;
+            } else if (type === 'stories') {
+                inboxContainer.innerHTML = `<div class="notification-row"><div class="notification-icon">📸</div><div style="flex: 1; text-align: right;"><h5 style="font-size: 14px;">قصة جديدة</h5><p style="font-size: 12px; color: var(--text-secondary);">تم النشر منذ 30 دقيقة</p></div></div>`;
+            }
+        }
+
+        const chatRoomView = document.getElementById('chat-room-view');
+        const roomTargetName = document.getElementById('room-target-name');
+        const roomMessagesContainer = document.getElementById('room-messages-container');
+        const chatMsgInput = document.getElementById('chat-msg-input');
+        const sendChatMsgBtn = document.getElementById('send-chat-msg-btn');
+
+        window.openChatRoom = function(name, initialMsg) {
+            roomTargetName.textContent = name;
+            roomMessagesContainer.innerHTML = `<div class="msg-bubble msg-incoming">${initialMsg}</div>`;
+            chatRoomView.style.display = 'flex';
+        }
+        window.closeChatRoom = function() { chatRoomView.style.display = 'none'; }
+
+        sendChatMsgBtn.addEventListener('click', () => {
+            const text = chatMsgInput.value.trim();
+            if (text) {
+                const outMsg = document.createElement('div');
+                outMsg.className = 'msg-bubble msg-outgoing';
+                outMsg.textContent = text;
+                roomMessagesContainer.appendChild(outMsg);
+                chatMsgInput.value = '';
+                roomMessagesContainer.scrollTop = roomMessagesContainer.scrollHeight;
+            }
+        });
+
+        loginBtn.addEventListener('click', () => {
+            const username = usernameInput.value.trim() || 'باشمهندس';
+            safeStorage.setItem('saif_user', username);
+            bottomNav.style.display = 'flex';
+            document.getElementById('auth-screen').classList.remove('active');
+            document.getElementById('feed-screen').classList.add('active');
+        });
+
+        logoutBtn.addEventListener('click', () => {
+            safeStorage.removeItem('saif_user');
+            usernameInput.value = '';
+            document.getElementById('profile-screen').classList.remove('active');
+            document.getElementById('auth-screen').classList.add('active');
+            bottomNav.style.display = 'none';
+        });
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const saved = safeStorage.getItem('saif_user');
+            if (saved) {
+                document.getElementById('auth-screen').classList.remove('active');
+                document.getElementById('feed-screen').classList.add('active');
+                bottomNav.style.display = 'flex';
+            } else {
+                bottomNav.style.display = 'none';
+                document.getElementById('auth-screen').classList.add('active');
+            }
+        });
+    </script>
+</body>
+</html>
